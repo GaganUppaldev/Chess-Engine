@@ -79,17 +79,78 @@ class Pawn : public piece{
     
 };
     
-
-class queen: public piece{
+//Rock
+class Rock : public piece{
     public:
-    queen(string c ) : piece(c,"Q"){}
+    Rock(string c ) : piece(c,"R"){}
+    //override 
+    bool isvalidmove(int sr , int sc , int dr , int dc , piece* grid[8][8]) override {
+
+       
+    // boundary check
+    if(dr < 0 || dr > 7 || dc < 0 || dc > 7)
+        return false;
+
+    // rook must move in straight line
+    if(sr != dr && sc != dc)
+        return false;
+
+    // moving vertically down
+    if(dr > sr){
+        for(int i = sr + 1; i < dr; i++){
+            if(grid[i][sc] != nullptr)
+                return false;
+        }
+    }
+
+    // moving vertically up
+    if(dr < sr){
+        for(int i = sr - 1; i > dr; i--){
+            if(grid[i][sc] != nullptr)
+                return false;
+        }
+    }
+
+    // moving right
+    if(dc > sc){
+        for(int i = sc + 1; i < dc; i++){
+            if(grid[sr][i] != nullptr)
+                return false;
+        }
+    }
+
+    // moving left
+    if(dc < sc){
+        for(int i = sc - 1; i > dc; i--){
+            if(grid[sr][i] != nullptr)
+                return false;
+        }
+    }
+
+    // cannot capture own piece
+    if(grid[dr][dc] != nullptr && grid[dr][dc]->color == color)
+        return false;
+
+    return true;
+}
+
+  
      
+
 
 };
 
+//queen
 
+//king 
+
+//horse
+
+//bishop
 
 class Board{
+    //grid made , every box of grid is pointer of piece means it will store object adress objects created  by constructor piece now via adress we shifts adress and make
+    //moves in chess or our whole logic is moving addresses or pointers in the game 
     piece* grid[8][8]; 
     public:
     Board(){
@@ -116,6 +177,14 @@ class Board{
         for(int i = 0 ; i < 8 ; i++){
             grid[6][i] = new Pawn("W");
         }
+
+        // black rooks
+        grid[0][0] = new Rock("B");
+        grid[0][7] = new Rock("B");
+
+        // white rooks
+        grid[7][0] = new Rock("W");
+        grid[7][7] = new Rock("W");
 
     }
     
@@ -169,10 +238,14 @@ Board board;
 board.display();
 //movments
 cout << "\nMoving white pawn from (6,0) to (5,0)\n\n";
+
     board.move(6,0,5,0);
+    
+    board.display();
+    cout << "Rock movement << endl" << endl;
+    board.move(7,0,6,0);
 
     board.display();
-
     
 
 
