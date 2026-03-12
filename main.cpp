@@ -140,13 +140,78 @@ class Rock : public piece{
 
 };
 
+//Bishop
+
+class Bishop : public piece {
+    public:
+    Bishop(string c) : piece(c , "BS"){}
+    bool isvalidmove(int sr , int sc , int dr , int dc , piece* grid[8][8]) override {
+        //boundry check 
+        if(dr < 0 || dr > 7 || dc < 0 || dc > 7){
+            return false;
+        }
+
+        //must move in daigonal 
+        if(abs(dr - sr) != abs(dc - sc)){
+            return false;
+        }
+
+        //direction check
+         int rowStep = (dr > sr) ? 1 : -1;
+         int colStep = (dc > sc) ? 1 : -1;
+
+
+         int r = sr + rowStep;
+         int c = sc + colStep;
+        while(r != dr){
+            if(grid[r][c] != nullptr)
+            return false;
+            r += rowStep;
+            c += colStep;
+
+            // cannot capture own piece
+           if(grid[dr][dc] != nullptr && grid[dr][dc]->color == color)
+           return false;
+    }
+
+    return true;
+        
+    }
+
+
+};
+
+
 //queen
+
+class Queen : public piece{
+    public:
+    Queen(string c) : piece(c , "Q"){}
+    bool isvalidmove(int sr , int sc , int dr , int dc , piece* grid[8][8]) override{
+        //boudry check 
+        if(dr < 0 || dr > 7 || dc < 0 || dc > 7){
+            return false;
+        }
+
+        //check if move is valid for rook or bishop
+        Rock tempR(color);//temporary object of rock and bishop to check if move is valid for either of them because queen can move like both
+        Bishop tempB(color);
+        if(tempR.isvalidmove(sr, sc, dr, dc, grid) || tempB.isvalidmove(sr, sc, dr, dc, grid)){
+            return true;
+        }
+        return false;
+        
+
+
+    }
+
+};
 
 //king 
 
 //horse
 
-//bishop
+
 
 class Board{
     //grid made , every box of grid is pointer of piece means it will store object adress objects created  by constructor piece now via adress we shifts adress and make
@@ -185,6 +250,20 @@ class Board{
         // white rooks
         grid[7][0] = new Rock("W");
         grid[7][7] = new Rock("W");
+
+        //bishops 
+        grid[0][2] = new Bishop("B");
+        grid[0][5] = new Bishop("B");
+        grid[7][2] = new Bishop("W");
+        grid[7][5] = new Bishop("W");
+        
+        //queen
+        grid[0][3] = new Queen("B");
+        grid[7][3] = new Queen("W");
+        
+        
+
+        
 
     }
     
