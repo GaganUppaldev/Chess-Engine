@@ -207,9 +207,63 @@ class Queen : public piece{
 
 };
 
+class knight : public piece{
+    public:
+    knight(string c) : piece(c,"K"){}
+    bool isvalidmove(int sr , int sc , int dr , int dc , piece* grid[8][8]) override{
+
+        //boundry check 
+        if(dr < 0 || dr > 7 || dc < 0 || dc > 7){
+            return false;
+        }
+        //knight L Shape move check
+        int r = abs(dr - sr);
+        int c = abs(dc - sc);
+
+        
+        if((r == 2 && c == 1) || (r == 1 && c == 2)){
+
+            // cannot capture own piece
+            if(grid[dr][dc] != nullptr && grid[dr][dc]->color == color)
+                return false;
+
+            return true;
+        }
+
+        return false;
+
+
+    }
+};
 //king 
 
-//horse
+class King : public piece{
+    public:
+    King(string c) : piece(c , "*"){}
+    bool isvalidmove(int sr , int sc , int dr , int dc , piece* grid[8][8]) override{
+        //boundry check
+        if(dr < 0 || dr > 7 || dc < 0 || dc > 7){
+            return false;
+        }
+
+        int r = abs(dr - sr);
+        int c = abs(dc - sc);
+
+        // king can move 1 square in any direction
+        if(r <= 1 && c <= 1){
+
+            // cannot capture own piece
+            if(grid[dr][dc] != nullptr && grid[dr][dc]->color == color)
+                return false;
+
+            return true;
+        }
+        
+        return false;
+    }
+};
+
+
 
 
 
@@ -261,10 +315,16 @@ class Board{
         grid[0][3] = new Queen("B");
         grid[7][3] = new Queen("W");
         
-        
+        //knight
+        grid[0][1] = new knight("B");
+        grid[0][6] = new knight("B");
 
-        
+        grid[7][1] = new knight("W");
+        grid[7][6] = new knight("W");
 
+        //king 
+        grid[0][4] = new King("B");
+        grid[7][4] = new King("W");
     }
     
 
@@ -318,14 +378,16 @@ board.display();
 //movments
 cout << "\nMoving white pawn from (6,0) to (5,0)\n\n";
 
+    /*
     board.move(6,0,5,0);
     
     board.display();
     cout << "Rock movement << endl" << endl;
     board.move(7,0,6,0);
-
+    */
     board.display();
     
 
 
 }
+
